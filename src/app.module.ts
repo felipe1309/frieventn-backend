@@ -6,9 +6,18 @@ import { EventsModule } from './events/events.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { consts } from './const';
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
+    PassportModule,
+    JwtModule.register({
+      secret: consts.JWT_SECRET,
+      signOptions: { expiresIn: '60s' },
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
@@ -19,6 +28,6 @@ import { MongooseModule } from '@nestjs/mongoose';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, JwtStrategy],
 })
 export class AppModule {}
