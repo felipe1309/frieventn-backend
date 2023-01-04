@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ProfileController } from './profile.controller';
 import { User, UserSchema } from './users.schema';
 import { UsersService } from './users.service';
+import { ProfileService } from './profile.service';
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -11,7 +13,8 @@ import { UsersService } from './users.service';
       },
     ]),
   ],
-  providers: [UsersService],
+  controllers: [ProfileController],
+  providers: [UsersService, ProfileService],
   exports: [UsersService],
 })
 export class UsersModule {}

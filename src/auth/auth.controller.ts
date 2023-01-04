@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/jwt-auth.guard';
 import { AuthService } from './auth.service';
 import { RegisterAuthDto } from './dto/registeAuth.dto';
@@ -14,5 +14,9 @@ export class AuthController {
   @Post('logIn')
   async logIn(@Body() logInAuthDto:LogInAuthDto) {
     return this.authService.logIn(logInAuthDto)
+  }
+  @Get('pepe')
+  pepe() {
+    return 'el pepe'
   }
 }

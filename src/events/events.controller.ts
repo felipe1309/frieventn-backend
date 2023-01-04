@@ -1,34 +1,56 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Request,
+  UseGuards,
+  Put,
+  Param,
+} from '@nestjs/common';
 import { EventsService } from './events.service';
+import { JwtAuthGuard } from 'src/jwt-auth.guard';
 import { CreateEventDto } from './dto/create-event.dto';
-import { UpdateEventDto } from './dto/update-event.dto';
+import { GetEventFromListId } from './dto/getEventFromListId';
 
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
-
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createEventDto: CreateEventDto) {
-    return this.eventsService.create(createEventDto);
+  async create(
+    @Request() req,
+    @Body() { description, initDate, name }: CreateEventDto,
+  ) {
+    const event = await this.eventsService.create(
+      {
+        description,
+        initDate,
+        name,
+      },
+      req.user.id,
+    );
+    return event;
   }
 
   @Get()
-  findAll() {
-    return this.eventsService.findAll();
+  async findAll() {
+    return await this.eventsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.eventsService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.eventsService.findOne(id);
   }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
-    return this.eventsService.update(+id, updateEventDto);
+  @UseGuards(JwtAuthGuard)
+  @Put('addUser/:id')
+  async addUserEvent(@Param('id') id: string, @Request() req) {
+    return await this.eventsService.addUser(req.user.id, id);
   }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.eventsService.remove(+id);
+  @UseGuards(JwtAuthGuard)
+  @Get('miEvents')
+  async listEventsFromListId(@Request() req) {
+    console.log(req.user)
+    await 'el pepe'
   }
 }

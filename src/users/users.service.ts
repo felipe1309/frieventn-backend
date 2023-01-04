@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ObjectId,Types } from 'mongoose';
 import { User, UserDocument } from './users.schema';
 import { hash, compare } from 'bcrypt';
 @Injectable()
@@ -32,8 +32,15 @@ export class UsersService {
    * @param password la contraseña que biene por el cuerpo de la peticion
    * @param passwordDb la contraseña (en hash) que biene de la base de datos
    */
-  async checkPassword(password:string, passwordDb:string): Promise<boolean> {
+  async checkPassword(password: string, passwordDb: string): Promise<boolean> {
     const checkPassword = await compare(password, passwordDb);
     return checkPassword;
+  }
+  async createEvent(idUser: string, idEvent: Types.ObjectId) {
+    const { listEvents } = await this.userModel.findById(idUser);
+    const userUpdate = await this.userModel.findByIdAndUpdate(idUser, {
+      listEvents: [idEvent, ...listEvents],
+    });
+    return userUpdate
   }
 }
